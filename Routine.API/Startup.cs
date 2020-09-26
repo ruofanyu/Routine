@@ -1,0 +1,105 @@
+using System;
+using AutoMapper;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
+using Routine.API.Data;
+using Routine.API.Services;
+
+namespace Routine.API
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers(setup =>
+            {
+                setup.ReturnHttpNotAcceptable = true;
+                
+                #region 添加输出样式的另一种写法
+                ////在返回的格式中添加xml格式（原本仅支持json格式）
+                //setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                ////调整输出的类型，由原本的json优先变成了xml有限
+                //setup.OutputFormatters.Insert(0, new XmlDataContractSerializerOutputFormatter()); 
+                #endregion
+
+            })
+                //此处配置的是patch更新员工时，局部更新信息实体EmployeeUpdateDto和员工实体Employee实体进行更新转换时的配置
+                .AddNewtonsoftJson(setup =>
+            {
+                setup.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            })
+                .AddXmlDataContractSerializerFormatters()     //在MVC3.0之后，现在可以使用在后面追加的方式来写
+                .ConfigureApiBehaviorOptions(setup =>
+                {
+                    setup.InvalidModelStateResponseFactory = context =>
+                    {
+                        var problemDeatil = new ValidationProblemDetails(context.ModelState)
+                        {
+                            Type = "http://www.baidu.com",     //错误的类型，一般可以查阅文档得知，这里我们就指向百度
+                            Title = "有错误！",
+                            Status = StatusCodes.Status422UnprocessableEntity,     //错误的状态码
+                            Detail = "请看详细信息",
+                            Instance = context.HttpContext.Request.Path            //错误的url
+                        };
+
+                        problemDeatil.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);    //指向这个错误信息的ID值
+                        return new UnprocessableEntityObjectResult(problemDeatil)
+                        {
+                            ContentTypes = { "application/problem+json" }
+                        };
+                    };
+                });
+
+
+            //添加自动化映射插件之后，配置automapper的信息
+            //  获取当前的所有的配置信息
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+
+            services.AddDbContext<RoutineDbContext>(option =>
+            {
+                option.UseSqlite("Data Source=routine.db");
+            });
+
+            services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+        }
+
+
+        public void ConfigureDevelopment(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+    }
+}
