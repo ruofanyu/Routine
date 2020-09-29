@@ -83,8 +83,6 @@ namespace Routine.API.Controllers
             return Ok(companyDto);
         }
 
-
-
         [HttpGet("{companyId}", Name = nameof(GetCompany))]
         //可以把上面的("{companyId})写在下面这样"
         //[Route("{companyId}")]
