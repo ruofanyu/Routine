@@ -12,7 +12,7 @@ namespace Routine.API.Helper
     /// <summary>
     /// 该类是用于批量获取公司的主键ID(Guid)，并放入IEnumberable集合中
     /// </summary>
-    public class ArrayModelBinder : IModelBinder
+    public class ArrayModelBinder : IModelBinder    //继承于IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
@@ -26,12 +26,11 @@ namespace Routine.API.Helper
             var value = bindingContext.ValueProvider.GetValue(bindingContext.BinderModelName).ToString();
             if (string.IsNullOrWhiteSpace(value))
             {
-                //如果为空，则搜索成功，返回空值
+                //如果为空，则表示搜索成功，但值为空，返回空值
                 bindingContext.Result = ModelBindingResult.Success(null);
                 return Task.CompletedTask;
             }
-
-            //如果不为空，则获取该数据类型中的第一个类型（即主键GUID）
+            //如果不为空，则获取该数据类型中的第一个类型（即主键GUID）（因为我们传过来的仅仅只有一个，guid集合）
             var elementType = bindingContext.ModelType.GetTypeInfo().GenericTypeParameters[0];
 
             //创建转换器

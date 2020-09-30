@@ -47,7 +47,7 @@ namespace Routine.API
                 {
                     setup.InvalidModelStateResponseFactory = context =>
                     {
-                        var problemDeatil = new ValidationProblemDetails(context.ModelState)
+                        var problemDetail = new ValidationProblemDetails(context.ModelState)
                         {
                             Type = "http://www.baidu.com",     //错误的类型，一般可以查阅文档得知，这里我们就指向百度
                             Title = "有错误！",
@@ -56,8 +56,8 @@ namespace Routine.API
                             Instance = context.HttpContext.Request.Path            //错误的url
                         };
 
-                        problemDeatil.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);    //指向这个错误信息的ID值
-                        return new UnprocessableEntityObjectResult(problemDeatil)
+                        problemDetail.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);    //指向这个错误信息的ID值
+                        return new UnprocessableEntityObjectResult(problemDetail)
                         {
                             ContentTypes = { "application/problem+json" }
                         };
