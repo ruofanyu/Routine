@@ -28,7 +28,7 @@ namespace Routine.API
             services.AddControllers(setup =>
             {
                 setup.ReturnHttpNotAcceptable = true;
-                
+
                 #region 添加输出样式的另一种写法
                 ////在返回的格式中添加xml格式（原本仅支持json格式）
                 //setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
@@ -63,13 +63,13 @@ namespace Routine.API
                         };
                     };
                 });
-
-
             //添加自动化映射插件之后，配置automapper的信息
-            //  获取当前的所有的配置信息
+            //获取当前的所有的配置信息
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<ICompanyRepository, CompanyRepository>();
+
+            //services.AddScoped<DbContext, RoutineDbContext>();
 
             services.AddDbContext<RoutineDbContext>(option =>
             {
@@ -80,10 +80,10 @@ namespace Routine.API
         }
 
 
-        public void ConfigureDevelopment(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        //public void ConfigureDevelopment(IApplicationBuilder app, IWebHostEnvironment env)
+        //{
 
-        }
+        //}
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -91,6 +91,8 @@ namespace Routine.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

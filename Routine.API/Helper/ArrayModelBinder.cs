@@ -23,7 +23,7 @@ namespace Routine.API.Helper
                 return Task.CompletedTask;
             }
             //成功则获取该主键
-            var value = bindingContext.ValueProvider.GetValue(bindingContext.BinderModelName).ToString();
+            var value = bindingContext.ValueProvider.GetValue(bindingContext.ModelName).ToString();
             if (string.IsNullOrWhiteSpace(value))
             {
                 //如果为空，则表示搜索成功，但值为空，返回空值
@@ -31,7 +31,7 @@ namespace Routine.API.Helper
                 return Task.CompletedTask;
             }
             //如果不为空，则获取该数据类型中的第一个类型（即主键GUID）（因为我们传过来的仅仅只有一个，guid集合）
-            var elementType = bindingContext.ModelType.GetTypeInfo().GenericTypeParameters[0];
+            var elementType = bindingContext.ModelType.GetTypeInfo().GenericTypeArguments[0];
 
             //创建转换器
             var converter = TypeDescriptor.GetConverter(elementType);

@@ -27,7 +27,7 @@ namespace Routine.API.Controllers
         }
 
         [HttpGet("({ids})", Name = nameof(GetCompanyCollection))]
-        public async Task<ActionResult<IActionResult>> GetCompanyCollection([FromRoute][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
+        public async Task<IActionResult > GetCompanyCollection([FromRoute][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
             if (ids == null)
             {
@@ -47,6 +47,7 @@ namespace Routine.API.Controllers
 
 
         [HttpPost]
+        [Route("createcompanycollection")]
         public async Task<ActionResult<IEnumerable<CompanyDto>>> CreateCompanyCollection(
             IEnumerable<CompanyAddDto> companycollection)
         {

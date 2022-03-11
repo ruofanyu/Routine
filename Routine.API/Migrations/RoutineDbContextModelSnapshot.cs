@@ -59,7 +59,7 @@ namespace Routine.API.Migrations
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("DateOfbirth")
+                    b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EmployeeNo")

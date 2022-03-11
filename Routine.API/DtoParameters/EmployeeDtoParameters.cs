@@ -12,7 +12,8 @@ namespace Routine.API.DtoParameters
         public string Gender { get; set; }
         public string Q { get; set; }
         public int PageNumber { get; set; } = 1;
-        public int _pageSize = 5;
+
+        private int _pageSize = 5;
 
         public int PageSize
         {

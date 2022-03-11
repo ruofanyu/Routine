@@ -29,12 +29,12 @@ namespace Routine.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "Employees",
-                columns: new[] { "Id", "CompanyId", "DateOfbirth", "EmployeeNo", "FirstName", "Gender", "LastName" },
+                columns: new[] { "Id", "CompanyId", "DateOfBirth", "EmployeeNo", "FirstName", "Gender", "LastName" },
                 values: new object[] { new Guid("2fc93c7f-6959-421c-bf0a-a9ed5d5d1625"), new Guid("bd8960e0-d4e8-421c-bb6f-828aaf2fb6f6"), new DateTime(1996, 11, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "G003", "Mary", 2, "King" });
 
             migrationBuilder.InsertData(
                 table: "Employees",
-                columns: new[] { "Id", "CompanyId", "DateOfbirth", "EmployeeNo", "FirstName", "Gender", "LastName" },
+                columns: new[] { "Id", "CompanyId", "DateOfBirth", "EmployeeNo", "FirstName", "Gender", "LastName" },
                 values: new object[] { new Guid("e7a83f38-eab8-4fc0-abf8-f1cf1c3f19ae"), new Guid("bd8960e0-d4e8-421c-bb6f-828aaf2fb6f6"), new DateTime(1987, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), "G097", "Kevin", 1, "Richardson" });
         }
 

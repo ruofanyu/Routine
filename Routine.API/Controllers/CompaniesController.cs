@@ -26,9 +26,6 @@ namespace Routine.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-
-
-
         [HttpGet(Name = nameof(GetCompanies))]
         [HttpHead]
         //public async Task<IActionResult> GetCompanies()
@@ -59,27 +56,17 @@ namespace Routine.API.Controllers
 
             Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetadata, new JsonSerializerOptions
             {
+                //此处是因为返回前端的链接中处于安全考虑，将“&”转译了，如果我们需要返回链接便于人识别，可以加上下面这个代码
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             }));
-            if (companies == null)
-            {
-                return NotFound();
-            }
+            //if (companies == null)
+            //{
+            //    return NotFound();
+            //}
 
             //进行映射
             var companyDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
-            //var companyDto = new List<CompanyDto>();
-
-            //foreach (var company in companies)
-            //{
-            //    companyDto.Add(new CompanyDto
-            //    {
-            //        Id = company.Id,
-            //        Name = company.Name
-            //    });
-            //}
-            //return new JsonResult(companies);
             return Ok(companyDto);
         }
 
@@ -132,6 +119,12 @@ namespace Routine.API.Controllers
         }
 
 
+        /// <summary>
+        /// 获取当前页的前一页和后一页链接
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private string CreateCompaniesResourceUri(CompanyDtoParameters parameters, ResourceUriType type)
         {
             switch (type)

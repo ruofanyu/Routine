@@ -99,7 +99,6 @@ namespace Routine.API.Controllers
             {
                 return NotFound();
             }
-
             var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
             if (employeeEntity == null)
             {
@@ -123,9 +122,7 @@ namespace Routine.API.Controllers
             //最后将updateDto映射回entity里面
             _mapper.Map(employee, employeeEntity);
             _companyRepository.UpdateEmployee(employeeEntity);
-
             await _companyRepository.SaveAsync();
-
             return NoContent();
         }
 
@@ -149,7 +146,29 @@ namespace Routine.API.Controllers
             var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
             if (employeeEntity == null)
             {
-                return NotFound();
+                //如果为空则创建资源
+                var employeeDto = new EmployeeUpdateDto();
+                //将patchDocument中的局部更新信息应用于新创建的实体对象
+                patchDocument.ApplyTo(employeeDto, ModelState);
+                if (TryValidateModel(employeeDto))
+                {
+                    //抛出异常
+                    return ValidationProblem(ModelState);
+                }
+                //将UpdateDto对象映射为数据库实体对象
+                var employeeToAdd = _mapper.Map<Employee>(employeeDto);
+                employeeToAdd.Id = employeeId;
+
+                _companyRepository.AddEmployee(companyId, employeeToAdd);
+                await _companyRepository.SaveAsync();
+
+                //返回显示Dto的实体对象
+                var employeeToReturnDto = _mapper.Map<EmployeeDto>(employeeToAdd);
+                return CreatedAtRoute(nameof(GetEmployeeForCompany), new
+                {
+                    companyId,
+                    employeeId = employeeToReturnDto.Id
+                }, employeeToReturnDto);
             }
 
             var dtoToPatch = _mapper.Map<EmployeeUpdateDto>(employeeEntity);
@@ -169,7 +188,6 @@ namespace Routine.API.Controllers
             return NoContent();
 
         }
-
 
 
         [HttpDelete("{employeeId}")]

@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Routine.API.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Routine.API.Data
 {
@@ -52,7 +48,7 @@ namespace Routine.API.Data
                 {
                     Id = Guid.Parse("2FC93C7F6959421CBF0AA9ED5D5D1625"),
                     CompanyId = Guid.Parse("BD8960E0D4E8421CBB6F828AAF2FB6F6"),
-                    DateOfbirth = new DateTime(1996, 11, 4),
+                    DateOfBirth = new DateTime(1996, 11, 4),
                     EmployeeNo = "G003",
                     FirstName = "Mary",
                     LastName = "King",
@@ -62,7 +58,7 @@ namespace Routine.API.Data
                 {
                     Id = Guid.Parse("E7A83F38EAB84FC0ABF8F1CF1C3F19AE"),
                     CompanyId = Guid.Parse("BD8960E0D4E8421CBB6F828AAF2FB6F6"),
-                    DateOfbirth = new DateTime(1987, 4, 6),
+                    DateOfBirth = new DateTime(1987, 4, 6),
                     EmployeeNo = "G097",
                     FirstName = "Kevin",
                     LastName = "Richardson",

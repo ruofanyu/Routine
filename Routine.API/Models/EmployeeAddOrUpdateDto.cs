@@ -29,7 +29,7 @@ namespace Routine.API.Models
         public Gender Gender { get; set; }
 
         [Display(Name = "出生日期")]
-        public DateTime DateOfbirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

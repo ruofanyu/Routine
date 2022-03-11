@@ -113,11 +113,9 @@ namespace Routine.API.Services
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-
             //if (string.IsNullOrWhiteSpace(parameters.CompanyName) && string.IsNullOrWhiteSpace(parameters.SearchTerm))
             //{
             //    return await _context.Companies.ToListAsync();
-
             //}
             var queryExpression = _context.Companies as IQueryable<Company>;
             if (!string.IsNullOrWhiteSpace(parameters.CompanyName))
@@ -131,8 +129,8 @@ namespace Routine.API.Services
                 queryExpression = queryExpression.Where(x => x.Name.Contains(parameters.SearchTerm) || x.Introduction.Contains(parameters.SearchTerm));
             }
 
-            //queryExpression = queryExpression.Skip(parameters.pageSize * (parameters.pageIndex - 1))
-            //    .Take(parameters.pageSize);
+            //queryExpression = queryExpression.Skip(parameters.PageSize * (parameters.PageIndex - 1))
+            //    .Take(parameters.PageSize);
             //return await queryExpression.ToListAsync();
             return await PageList<Company>.CreateAsync(queryExpression, parameters.PageIndex, parameters.PageSize);
 
@@ -203,7 +201,6 @@ namespace Routine.API.Services
             {
                 return await _context.Employees.Where(x => x.CompanyId == companyId).OrderBy(x => x.EmployeeNo).ToListAsync();
             }
-
             var items = _context.Employees.Where(x => x.CompanyId == companyId);
             if (!string.IsNullOrWhiteSpace(genderDisplayer))
             {
@@ -217,11 +214,8 @@ namespace Routine.API.Services
 
                 items = items.Where(x => x.EmployeeNo.Contains(search) || x.FirstName.Contains(search) || x.LastName.Contains(search));
             }
-
             return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
-
         }
-
 
 
         /// <summary>
@@ -237,7 +231,6 @@ namespace Routine.API.Services
             {
                 throw new ArgumentNullException(nameof(companyId));
             }
-
             var items = _context.Employees.Where(x => x.CompanyId == companyId);
             if (!string.IsNullOrWhiteSpace(parameters.Gender))
             {
@@ -245,13 +238,11 @@ namespace Routine.API.Services
                 var gender = Enum.Parse<Gender>(parameters.Gender);
                 items = items.Where(x => x.Gender == gender);
             }
-            if (!string.IsNullOrWhiteSpace(parameters.Q.Trim()))
+            if (!string.IsNullOrWhiteSpace(parameters.Q))
             {
                 parameters.Q = parameters.Q.Trim();
-
                 items = items.Where(x => x.EmployeeNo.Contains(parameters.Q) || x.FirstName.Contains(parameters.Q) || x.LastName.Contains(parameters.Q));
             }
-
             //if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
             //{
             //    if (parameters.OrderBy.ToLower() == "name")
@@ -259,11 +250,9 @@ namespace Routine.API.Services
             //        items = items.OrderBy(x => x.FirstName).ThenBy(x => x.LastName);
             //    }
             //}
-
             var mappingDictionary = _propertyMappingService.GetPropertyMapping<EmployeeDto, Employee>();
             items = items.ApplySort(parameters.OrderBy, mappingDictionary);
             return await items.ToArrayAsync();
-
         }
 
         /// <summary>

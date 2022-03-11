@@ -14,7 +14,7 @@ namespace Routine.API.Models
         public string EmployeeNo { get; set; }
 
         public string Name { get; set; }
-        public string GenderDisplayer { get; set; }
+        public string GenderDisplay { get; set; }
         public int Age { get; set; }
     }
 }

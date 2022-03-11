@@ -9,6 +9,5 @@ namespace Routine.API.Models
     [EmployeeNoMustDifferentFromFirstName]
     public class EmployeeAddDto : EmployeeAddOrUpdateDto
     {
-
     }
 }

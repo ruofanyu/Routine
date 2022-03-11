@@ -7,6 +7,8 @@ namespace Routine.API.ValidationAttributes
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
+            //其中object value跟据EmployeeNoMustDifferentFromFirstNameAttribute所使用的地方不一样，如果在属性上使用，
+            //则value是属性级别，如果在类上使用，则value是类级别，故我们一般使用value来进行判断
             var addDto = (EmployeeAddOrUpdateDto)validationContext.ObjectInstance;
             if (addDto.EmployeeNo == addDto.FirstName)
             {
