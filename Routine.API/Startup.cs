@@ -8,23 +8,42 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Routine.API.Data;
+using Routine.API.Models;
 using Routine.API.Services;
 
 namespace Routine.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            //Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("Jobs.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.Configure<Schedule>(options =>
+            {
+                Configuration.GetSection("Schedule").Bind(options);
+            });
+
+            var tokenOption = Configuration.GetSection("TokenOption");
+            var val = tokenOption.GetValue<string>("Role");//val = "IT"
+
+            //方法二：配置绑定实例，以便在其他地方以注入方式使用
+            services.Configure<TokenOption>(tokenOption);
             services.AddControllers(setup =>
             {
                 setup.ReturnHttpNotAcceptable = true;
@@ -77,6 +96,16 @@ namespace Routine.API
             });
 
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Title = "测试智能",
+                    Description = ".net core & linux",
+                    Version = "1.0.0"
+                });
+            });
         }
 
 
@@ -93,6 +122,12 @@ namespace Routine.API
             }
 
             app.UseStaticFiles();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json","My Linux Project");
+            });
 
             app.UseRouting();
 

@@ -4,7 +4,11 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Options;
+using Routine.API.Data;
 using Routine.API.DtoParameters;
 using Routine.API.Entities;
 using Routine.API.Helper;
@@ -20,10 +24,15 @@ namespace Routine.API.Controllers
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
 
-        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper)
+        public Schedule  Schedule { get; set; }
+        //注入
+        private readonly TokenOption _tokenOption;
+        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper,IOptions<Schedule> options,IOptions<TokenOption> tokenOption)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            Schedule=options.Value;
+            _tokenOption = tokenOption.Value;
         }
 
         [HttpGet(Name = nameof(GetCompanies))]

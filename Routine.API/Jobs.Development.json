@@ -1,0 +1,33 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "Schedule": [
+    {
+      "Job": {
+        "Name": "同步保利威直播数据",
+        "Group": "1_后台作业",
+        "Description": "同步保利威直播数据",
+        "JobType": "AOWEN.JobRunner.Jobs.JobSyncPolyvLiveData, AOWEN.JobRunner",
+        "Durable": "true",
+        "Recover": "false",
+        "CronExpression": "0 0/10 * * * ?"
+      }
+    },
+    {
+      "Job": {
+        "Name": "发送微信广告主的客服消息",
+        "Group": "1_后台作业",
+        "Description": "发送微信广告主的客服消息",
+        "JobType": "AOWEN.JobRunner.Jobs.JobSyncPolyvLiveData, AOWEN.JobRunner",
+        "Durable": "true",
+        "Recover": "false",
+        "CronExpression": "0 0/1 * * * ?"
+      }
+    }
+  ]
+}

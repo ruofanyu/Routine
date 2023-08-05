@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using Routine.API.Entities;
 using Routine.API.ValidationAttributes;
 
 namespace Routine.API.Models
 {
 
-    [EmployeeNoMustDifferentFromFirstName]
+  [EmployeeNoMustDifferentFromFirstName]
     public class EmployeeAddOrUpdateDto : IValidatableObject
     {
         [Display(Name = "员工号")]

@@ -4,8 +4,6 @@ using Routine.API.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Routine.API.DtoParameters;
 using Routine.API.Helper;
@@ -13,7 +11,7 @@ using Routine.API.Models;
 
 namespace Routine.API.Services
 {
-    public class CompanyRepository : ICompanyRepository
+  public class CompanyRepository : ICompanyRepository
     {
         public readonly RoutineDbContext _context;
         private readonly IPropertyMappingService _propertyMappingService;
