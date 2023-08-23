@@ -12,9 +12,7 @@ namespace Routine.API.Migrations
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6");
+            //modelBuilder.HasAnnotation("ProductVersion", "3.1.6");
 
             modelBuilder.Entity("Routine.API.Entities.Company", b =>
                 {
@@ -117,7 +115,6 @@ namespace Routine.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-#pragma warning restore 612, 618
         }
     }
 }

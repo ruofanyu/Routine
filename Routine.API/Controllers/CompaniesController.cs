@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
@@ -23,15 +24,12 @@ namespace Routine.API.Controllers
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
-
-        public Schedule  Schedule { get; set; }
         //注入
         private readonly TokenOption _tokenOption;
-        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper,IOptions<Schedule> options,IOptions<TokenOption> tokenOption)
+        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper, IOptions<TokenOption> tokenOption)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            Schedule=options.Value;
             _tokenOption = tokenOption.Value;
         }
 
@@ -41,42 +39,50 @@ namespace Routine.API.Controllers
         //既可以使用上面的这个方式，也可以使用下面的这个——下面的是使用ActionResult<T>、其中T是IEnumerable<CompanyDto>类型
         public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompanies([FromQuery] CompanyDtoParameters parameters)
         {
-            var companies = await _companyRepository.GetCompaniesAsync(parameters);
-
-            //生成前一页标签
-            var previousPageLike = companies.HasPrevious
-                ? CreateCompaniesResourceUri(parameters, ResourceUriType.PreviousPage)
-                : null;
-
-            //生成后一页标签
-            var nextPageLinke = companies.HasNext
-                ? CreateCompaniesResourceUri(parameters, ResourceUriType.NextPage)
-                : null;
-
-            var pagenationMetadata = new
+            try
             {
-                totalCount = companies.TotalCount,
-                pageSize = companies.PageSize,
-                currentPage = companies.CurrentPage,
-                totalPages = companies.TotalPages,
-                previousPageLike,
-                nextPageLinke
-            };
 
-            Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetadata, new JsonSerializerOptions
+                var companies = await _companyRepository.GetCompaniesAsync(parameters);
+
+                //生成前一页标签
+                var previousPageLike = companies.HasPrevious
+                    ? CreateCompaniesResourceUri(parameters, ResourceUriType.PreviousPage)
+                    : null;
+
+                //生成后一页标签
+                var nextPageLinke = companies.HasNext
+                    ? CreateCompaniesResourceUri(parameters, ResourceUriType.NextPage)
+                    : null;
+
+                var pagenationMetadata = new
+                {
+                    totalCount = companies.TotalCount,
+                    pageSize = companies.PageSize,
+                    currentPage = companies.CurrentPage,
+                    totalPages = companies.TotalPages,
+                    previousPageLike,
+                    nextPageLinke
+                };
+
+                Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetadata, new JsonSerializerOptions
+                {
+                    //此处是因为返回前端的链接中处于安全考虑，将“&”转译了，如果我们需要返回链接便于人识别，可以加上下面这个代码
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }));
+                //if (companies == null)
+                //{
+                //    return NotFound();
+                //}
+
+                //进行映射
+                var companyDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
+                return Ok(companyDto);
+            }
+            catch (Exception e)
             {
-                //此处是因为返回前端的链接中处于安全考虑，将“&”转译了，如果我们需要返回链接便于人识别，可以加上下面这个代码
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            }));
-            //if (companies == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //进行映射
-            var companyDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
-
-            return Ok(companyDto);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpGet("{companyId}", Name = nameof(GetCompany))]

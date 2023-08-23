@@ -10,6 +10,7 @@ namespace Routine.API.Data
         {
 
         }
+
         public DbSet<Company> Companies { get; set; }
 
         public DbSet<Employee> Employees { get; set; }
@@ -32,11 +33,11 @@ namespace Routine.API.Data
                 .OnDelete(DeleteBehavior.Cascade);     //此处表明是级联删除
 
             modelBuilder.Entity<Company>().HasData(new
-            {
-                Id = Guid.Parse("BD8960E0D4E8421CBB6F828AAF2FB6F6"),
-                Name = "Microsoft",
-                Introduction = "Great Company"
-            },
+                {
+                    Id = Guid.Parse("BD8960E0D4E8421CBB6F828AAF2FB6F6"),
+                    Name = "Microsoft",
+                    Introduction = "Great Company"
+                },
                 new
                 {
                     Id = Guid.Parse("2D072DAB2C514933A26EA09FE1B4F218"),

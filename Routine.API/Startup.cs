@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,6 @@ namespace Routine.API
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("Jobs.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -34,11 +34,6 @@ namespace Routine.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.Configure<Schedule>(options =>
-            {
-                Configuration.GetSection("Schedule").Bind(options);
-            });
-
             var tokenOption = Configuration.GetSection("TokenOption");
             var val = tokenOption.GetValue<string>("Role");//val = "IT"
 
@@ -46,13 +41,13 @@ namespace Routine.API
             services.Configure<TokenOption>(tokenOption);
             services.AddControllers(setup =>
             {
-                setup.ReturnHttpNotAcceptable = true;
+                setup.ReturnHttpNotAcceptable = false;
 
                 #region 添加输出样式的另一种写法
                 ////在返回的格式中添加xml格式（原本仅支持json格式）
-                //setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
                 ////调整输出的类型，由原本的json优先变成了xml有限
-                //setup.OutputFormatters.Insert(0, new XmlDataContractSerializerOutputFormatter()); 
+                //setup.OutputFormatters.Insert(0, new XmlDataContractSerializerOutputFormatter());
                 #endregion
 
             })
@@ -88,7 +83,7 @@ namespace Routine.API
 
             services.AddScoped<ICompanyRepository, CompanyRepository>();
 
-            //services.AddScoped<DbContext, RoutineDbContext>();
+            services.AddScoped<DbContext, RoutineDbContext>();
 
             services.AddDbContext<RoutineDbContext>(option =>
             {
@@ -126,7 +121,7 @@ namespace Routine.API
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json","My Linux Project");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Linux Project");
             });
 
             app.UseRouting();
