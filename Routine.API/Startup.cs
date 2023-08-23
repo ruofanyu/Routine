@@ -96,7 +96,7 @@ namespace Routine.API
             {
                 options.SwaggerDoc("v1", new OpenApiInfo()
                 {
-                    Title = "≤‚ ‘÷«ƒ‹",
+                    Title = "routine api",
                     Description = ".net core & linux",
                     Version = "1.0.0"
                 });
